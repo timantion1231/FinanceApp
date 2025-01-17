@@ -31,7 +31,6 @@ public class Main {
             signUp
             logIn
             logOut
-            loadUsers
             SetIncome
             getAllIncomes
             getAllExp

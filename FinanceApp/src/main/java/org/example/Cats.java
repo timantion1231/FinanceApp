@@ -1,7 +1,12 @@
 package org.example;
 
-public abstract class Cats {
-    private long totalMoney;
+import java.io.Serial;
+import java.io.Serializable;
+
+public abstract class Cats implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+    protected long totalMoney;
     public final String name;
 
     public Cats(String name) {
