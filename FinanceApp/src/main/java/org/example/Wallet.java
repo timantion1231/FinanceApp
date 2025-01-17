@@ -13,54 +13,64 @@ public class Wallet implements Serializable {
 
     public Wallet() {
         cats = new ArrayList<>();
-        //добавить и сохранить категории по умолчанию
+        cats.add(new Incomes("Зарплата"));
+        cats.add(new Incomes("Фриланс/подработка"));
+        cats.add(new Incomes("Инвестиции"));
+        cats.add(new Exp("Жилье"));
+        cats.add(new Exp("Еда"));
+        cats.add(new Exp("Транспорт"));
+        totalincomes = 0;
+        totalExp = 0;
     }
 
-    public Wallet(String walletPath) throws IOException {
-        cats = new ArrayList<>();
-        ArrayList<String> catsPath = new ArrayList<>();
-        BufferedReader bf = new BufferedReader(new FileReader(walletPath));
-        String currWallet;
-        while ((currWallet = bf.readLine()) != null) {
-            catsPath.add(currWallet);
-        }
-        for (String currPath : catsPath) {
-            bf = new BufferedReader(new FileReader(currPath));
-            byte type = Byte.parseByte(bf.readLine());
-            String catName = bf.readLine();
-            long totalMoney = Long.parseLong(bf.readLine());
-            long limit = Long.parseLong(bf.readLine());
-
-            if (type == 1) cats.add(new Incomes(catName, totalMoney));
-            else if (type == 2) cats.add(new Exp(catName, totalMoney, limit));
-            else {
-                System.out.println("Ошибка при чтении данных о категориях");
-                break;
+    public void addIncome(Incomes inc, long sum) {
+        for (Incomes incomes : getAllIncomes()) {
+            if (incomes.name.equals(inc.name)) {
+                incomes.setAction(sum);
             }
         }
     }
 
-    public void addAction(Cats category, long sum) {
-
+    public void addExp(Exp exp, long sum) {
+        for (Exp exps : getAllExp()) {
+            if (exps.name.equals(exp.name)) {
+                exps.setAction(sum);
+            }
+        }
     }
 
     public void setLimit(Exp exp, long sum) {
-
+        for (Cats cat : cats) {
+            if (exp.name.equals(cat.name)) ((Exp) cat).setLimit(sum);
+        }
     }
 
     public ArrayList<Exp> getAllExp() {
-        return null;
+        ArrayList<Exp> exp = new ArrayList<>();
+        for (Cats cat : cats) {
+            if (cat instanceof Exp) exp.add((Exp) cat);
+        }
+        return exp;
     }
 
     public ArrayList<Incomes> getAllIncomes() {
-        return null;
+        ArrayList<Incomes> inc = new ArrayList<>();
+        for (Cats cat : cats) {
+            if (cat instanceof Incomes) inc.add((Incomes) cat);
+        }
+        return inc;
     }
 
     public void createCategory(String name, boolean type) {
-
+        if (type) {
+            cats.add(new Incomes(name));
+        } else cats.add(new Exp(name));
     }
 
     public boolean removeCategory(Cats category) {
+        for (Cats cat : cats) {
+            if (cat.name.equals(category.name)) cats.remove(cat);
+        }
         return true;
     }
 
@@ -68,7 +78,15 @@ public class Wallet implements Serializable {
         return totalExp;
     }
 
-    public long getTotalincomes() {
+    public long getTotalIncomes() {
         return totalincomes;
+    }
+
+    public long getLimitLeft(Exp exp) {
+        return exp.getLimit() - exp.getTotalMoney();
+    }
+
+    public ArrayList<Cats> getAllCats() {
+        return cats;
     }
 }

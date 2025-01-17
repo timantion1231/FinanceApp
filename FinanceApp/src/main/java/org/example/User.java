@@ -7,7 +7,7 @@ public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     public final String login;
-    private final int password;
+    public final int password;
     Wallet wallet;
     private final ArrayList<Notifications> notifications;
 
@@ -15,69 +15,46 @@ public class User implements Serializable {
         this.login = login;
         this.password = password.hashCode();
         this.notifications = new ArrayList<>();
+        wallet = new Wallet();
     }
 
-    public User(String userPath) throws Exception {
-        String login = "";
-        int password = 0;
-        String walletPath = "";
-
-        try(FileInputStream fis = new FileInputStream(userPath);
-        ObjectInputStream ois = new ObjectInputStream(fis)){
-            User user = (User) ois.readObject();
-            login = user.login;
-            password = user.password;
-            wallet = user.wallet;
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-            throw e;
-        }
-
-        this.login = login;
-        this.password = password;
-        notifications = this.checkLoadNotifications();
-    }
 
     public ArrayList<Cats> getAllCategories() {
-        return null;
+        return wallet.getAllCats();
     }
 
     public void setIncome(Incomes income, long sum) {
-
+        wallet.addIncome(income, sum);
     }
 
     public void setExp(Exp exp, long sum) {
-
+        wallet.addExp(exp, sum);
     }
 
     public void setExpLimit(Exp exp, long limit) {
-
+        wallet.setLimit(exp, limit);
     }
 
     public boolean removeCat(Cats cat) {
+        wallet.removeCategory(cat);
         return true;
     }
 
     public long getLimitLeft(Exp exp) {
-        return 0;
+        return wallet.getLimitLeft(exp);
     }
 
     public String getAllNotifications() {
-        return null;
+        StringBuilder sb = new StringBuilder();
+        for (Notifications notify : notifications) {
+            sb.append(notify);
+        }
+        return sb.toString();
     }
 
-    private void setNewNotification(byte type) {
-
-    }
-
-    private void loadWallet() {
-
-    }
-
-    private ArrayList<Notifications> checkLoadNotifications() {
+    private ArrayList<Notifications> checkForNotifications() {
         ArrayList<Notifications> currNotifications = new ArrayList<>();
-        if (wallet.getTotalExp() > wallet.getTotalincomes()) {
+        if (wallet.getTotalExp() > wallet.getTotalIncomes()) {
             currNotifications.add(new Notifications((byte) 1));
         }
         for (Exp exp : wallet.getAllExp()) {
@@ -88,4 +65,11 @@ public class User implements Serializable {
         return currNotifications;
     }
 
+    public void createExp(String name) {
+        wallet.createCategory(name, false);
+    }
+
+    public void createIncomes(String name) {
+        wallet.createCategory(name, true);
+    }
 }
