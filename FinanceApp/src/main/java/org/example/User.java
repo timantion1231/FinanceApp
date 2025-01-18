@@ -9,9 +9,9 @@ public class User implements Serializable {
     public final String login;
     public final int password;
     Wallet wallet;
-    private final ArrayList<Notifications> notifications;
+    private ArrayList<Notifications> notifications;
 
-    public User(String login, String password) {//доделать создание кошелька и тд
+    public User(String login, String password) {
         this.login = login;
         this.password = password.hashCode();
         this.notifications = new ArrayList<>();
@@ -20,56 +20,57 @@ public class User implements Serializable {
 
 
     public ArrayList<Cats> getAllCategories() {
+        checkForNotifications();
         return wallet.getAllCats();
     }
 
     public void setIncome(Incomes income, long sum) {
         wallet.addIncome(income, sum);
+        checkForNotifications();
     }
 
     public void setExp(Exp exp, long sum) {
         wallet.addExp(exp, sum);
+        checkForNotifications();
     }
 
-    public void setExpLimit(Exp exp, long limit) {
-        wallet.setLimit(exp, limit);
-    }
-
-    public boolean removeCat(Cats cat) {
+    public void removeCat(Cats cat) {
         wallet.removeCategory(cat);
-        return true;
-    }
-
-    public long getLimitLeft(Exp exp) {
-        return wallet.getLimitLeft(exp);
     }
 
     public String getAllNotifications() {
         StringBuilder sb = new StringBuilder();
+        checkForNotifications();
         for (Notifications notify : notifications) {
-            sb.append(notify);
+            sb.append(notify.getNotificationText());
         }
-        return sb.toString();
+        return String.valueOf(sb);
     }
 
-    private ArrayList<Notifications> checkForNotifications() {
+    private void checkForNotifications() {
         ArrayList<Notifications> currNotifications = new ArrayList<>();
         if (wallet.getTotalExp() > wallet.getTotalIncomes()) {
-            currNotifications.add(new Notifications((byte) 1));
+            Notifications notis = new Notifications((byte) 1);
+            notis.setExpGraderIncNotification(wallet.getTotalIncomes(), wallet.getTotalExp());
+            currNotifications.add(notis);
         }
         for (Exp exp : wallet.getAllExp()) {
             if (exp.getLimit() < exp.getTotalMoney()) {
-                currNotifications.add(new Notifications((byte) 2));
+                Notifications notis = new Notifications((byte) 2);
+                notis.setLimitLastNotification(exp);
+                currNotifications.add(notis);
             }
         }
-        return currNotifications;
+        this.notifications = currNotifications;
     }
 
     public void createExp(String name) {
         wallet.createCategory(name, false);
+        checkForNotifications();
     }
 
     public void createIncomes(String name) {
         wallet.createCategory(name, true);
+        checkForNotifications();
     }
 }

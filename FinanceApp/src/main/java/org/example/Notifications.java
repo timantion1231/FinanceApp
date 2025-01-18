@@ -9,19 +9,22 @@ public class Notifications implements Serializable {
 
     String notificationText;
     byte type;
-    Cats cat;
 
+    /**
+     *
+     * @param type 1- расходы больше доходов, 2- превышен лимит
+     */
     public Notifications(byte type) {
         this.type = type;
     }
 
-    public void setLimitLastNotification(Exp exp, long limitLast) {
+    public void setLimitLastNotification(Exp exp) {
         notificationText = "Расходы по категории " + exp.name + " составляют: " + exp.getTotalMoney()
-                + ", что превышает лимит в " + exp.getLimit() + " на " + limitLast;
+                + ", что превышает лимит в " + exp.getLimit() + " на " + (exp.getTotalMoney()-exp.getLimit()) + "\n";
     }
 
     public void setExpGraderIncNotification(long inc, long exp) {
-        notificationText = "Расходы: " + exp + " превысили доходы: " + inc + " на " + (exp - inc);
+        notificationText = "Расходы: " + exp + " превысили доходы: " + inc + " на " + (exp - inc) + "\n";
     }
 
     public String getNotificationText() {

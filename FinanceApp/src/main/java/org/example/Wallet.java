@@ -27,6 +27,7 @@ public class Wallet implements Serializable {
         for (Incomes incomes : getAllIncomes()) {
             if (incomes.name.equals(inc.name)) {
                 incomes.setAction(sum);
+                totalincomes+=sum;
             }
         }
     }
@@ -35,15 +36,11 @@ public class Wallet implements Serializable {
         for (Exp exps : getAllExp()) {
             if (exps.name.equals(exp.name)) {
                 exps.setAction(sum);
+                totalExp+=sum;
             }
         }
     }
 
-    public void setLimit(Exp exp, long sum) {
-        for (Cats cat : cats) {
-            if (exp.name.equals(cat.name)) ((Exp) cat).setLimit(sum);
-        }
-    }
 
     public ArrayList<Exp> getAllExp() {
         ArrayList<Exp> exp = new ArrayList<>();
@@ -67,24 +64,33 @@ public class Wallet implements Serializable {
         } else cats.add(new Exp(name));
     }
 
-    public boolean removeCategory(Cats category) {
+    public void removeCategory(Cats category) {
         for (Cats cat : cats) {
-            if (cat.name.equals(category.name)) cats.remove(cat);
+            if (cat.name.equals(category.name)) {
+                cats.remove(cat);
+                return;
+            }
         }
-        return true;
     }
 
     public long getTotalExp() {
+        long totexp =0;
+        for(Exp exp:getAllExp()){
+            totexp +=exp.totalMoney;
+        }
+        totalExp = totexp;
         return totalExp;
     }
 
     public long getTotalIncomes() {
+        long totinc = 0;
+        for(Incomes incs: getAllIncomes()){
+            totinc+=incs.totalMoney;
+        }
+        totalincomes = totinc;
         return totalincomes;
     }
 
-    public long getLimitLeft(Exp exp) {
-        return exp.getLimit() - exp.getTotalMoney();
-    }
 
     public ArrayList<Cats> getAllCats() {
         return cats;

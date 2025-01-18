@@ -3,7 +3,7 @@ package org.example;
 import java.io.*;
 import java.util.ArrayList;
 
-public class Manager implements Serializable{
+public class Manager implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private ArrayList<User> users;
@@ -13,7 +13,7 @@ public class Manager implements Serializable{
 
     public Manager() {
         String isFirstStartPath = "firstStart.dat";
-        BufferedReader bf = null;
+        BufferedReader bf;
         boolean isFirstStart = true;
         try {
             bf = new BufferedReader(new FileReader(isFirstStartPath));
@@ -40,12 +40,12 @@ public class Manager implements Serializable{
         users.add(curruser);
         isUserIn = true;
         saveState();
-        return "Вы успешно авторизовались";
+        return "Вы успешно зарегистировались";
     }
 
-    public boolean isThatUserExists(String login){
-        for(User user: users){
-            if(user.login.equals(login)) return true;
+    public boolean isThatUserExists(String login) {
+        for (User user : users) {
+            if (user.login.equals(login)) return true;
         }
         return false;
     }
@@ -120,7 +120,7 @@ public class Manager implements Serializable{
         if (isUserIn) {
             StringBuilder sb = new StringBuilder();
             for (Incomes inc : curruser.wallet.getAllIncomes()) {
-                sb.append("\n" + inc.name + ": " + inc.totalMoney);
+                sb.append("\n").append(inc.name).append(": ").append(inc.totalMoney);
             }
             return sb.toString();
         } else return "Вы не авторизованы.";
@@ -130,9 +130,11 @@ public class Manager implements Serializable{
         if (isUserIn) {
             StringBuilder sb = new StringBuilder();
             for (Exp exp : curruser.wallet.getAllExp()) {
-                sb.append("\n" + exp.name + ": " + exp.totalMoney + ", лимит: " + exp.getLimit());
+                sb.append("\n").append(exp.name).append(": ").append(exp.totalMoney)
+                        .append(", лимит: ").append(exp.getLimit());
             }
-            return sb.toString();      }
+            return sb.toString();
+        }
         return "Вы не авторизованы.";
     }
 
@@ -227,6 +229,19 @@ public class Manager implements Serializable{
     public String getAllNotifications() {
         if (isUserIn) {
             return curruser.getAllNotifications();
+        }
+        return "Вы не авторизованы.";
+    }
+
+    public String removeCat(String name) {
+        if (isUserIn) {
+            for (Cats cats : curruser.getAllCategories()) {
+                if (cats.name.equals(name)) {
+                    curruser.removeCat(cats);
+                    return "Категория " + name + " успешно удалена";
+                }
+            }
+            return "Категория не найдена";
         }
         return "Вы не авторизованы.";
     }
