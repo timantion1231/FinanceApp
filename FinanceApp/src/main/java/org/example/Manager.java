@@ -9,10 +9,10 @@ public class Manager implements Serializable{
     private ArrayList<User> users;
     User curruser;
     public boolean isUserIn = false;
-    private final String statePath = "\\state.dat";
+    private final String statePath = "state.dat";
 
     public Manager() {
-        String isFirstStartPath = "\\firstStart.dat";
+        String isFirstStartPath = "firstStart.dat";
         BufferedReader bf = null;
         boolean isFirstStart = true;
         try {
